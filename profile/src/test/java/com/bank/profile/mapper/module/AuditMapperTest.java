@@ -1,6 +1,8 @@
-package com.bank.profile.mapper;
+package com.bank.profile.mapper.module;
 
 import com.bank.profile.entity.AuditEntity;
+import com.bank.profile.mapper.AuditMapper;
+import com.bank.profile.mapper.AuditMapperImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

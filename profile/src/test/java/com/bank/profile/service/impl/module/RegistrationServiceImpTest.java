@@ -1,9 +1,10 @@
-package com.bank.profile.service.impl;
+package com.bank.profile.service.impl.module;
 
 import com.bank.profile.dto.RegistrationDto;
 import com.bank.profile.entity.RegistrationEntity;
 import com.bank.profile.mapper.RegistrationMapper;
 import com.bank.profile.repository.RegistrationRepository;
+import com.bank.profile.service.impl.RegistrationServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

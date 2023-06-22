@@ -1,9 +1,10 @@
-package com.bank.profile.service.impl;
+package com.bank.profile.service.impl.module;
 
 import com.bank.profile.dto.AuditDto;
 import com.bank.profile.entity.AuditEntity;
 import com.bank.profile.mapper.AuditMapper;
 import com.bank.profile.repository.AuditRepository;
+import com.bank.profile.service.impl.AuditServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

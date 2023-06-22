@@ -1,7 +1,9 @@
-package com.bank.profile.mapper;
+package com.bank.profile.mapper.module;
 
-import com.bank.profile.dto.RegistrationDto;
-import com.bank.profile.entity.RegistrationEntity;
+import com.bank.profile.dto.ActualRegistrationDto;
+import com.bank.profile.entity.ActualRegistrationEntity;
+import com.bank.profile.mapper.ActualRegistrationMapper;
+import com.bank.profile.mapper.ActualRegistrationMapperImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,23 +18,21 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Тесты для {@link RegistrationMapper}
+ * Тесты для {@link ActualRegistrationMapper}
  */
-@DisplayName("Тесты для RegistrationMapper")
-class RegistrationMapperTest {
+@DisplayName("Тесты для ActualRegistrationMapper")
+class ActualRegistrationMapperTest {
 
-    private RegistrationDto dto;
-    private RegistrationEntity entity;
+    private ActualRegistrationDto dto;
+    private ActualRegistrationEntity entity;
 
-    private final RegistrationMapper mapper = new RegistrationMapperImpl();
-
+    private final ActualRegistrationMapper mapper = new ActualRegistrationMapperImpl();
 
     @BeforeEach
     void createEntityAndDto() {
-        dto = new RegistrationDto(1L, "hello", "hello", "hello", "hello",
+        dto = new ActualRegistrationDto(1L, "hello", "hello", "hello", "hello",
                 "hello", "hello", "hello", "hello", "hello", 1L);
-
-        entity = new RegistrationEntity(2L, "hello", "hello", "hello", "hello",
+        entity = new ActualRegistrationEntity(2L, "hello", "hello", "hello", "hello",
                 "hello", "hello", "hello", "hello", "hello", 2L);
     }
 
@@ -40,7 +40,7 @@ class RegistrationMapperTest {
     @Test
     @DisplayName("Маппинг в дто")
     void toDtoTest() {
-        RegistrationDto result = mapper.toDto(entity);
+        ActualRegistrationDto result = mapper.toDto(entity);
 
         assertAll(
                 () -> assertNotNull(result),
@@ -69,7 +69,7 @@ class RegistrationMapperTest {
     @Test
     @DisplayName("Маппинг в энтити")
     void toEntityTest() {
-        RegistrationEntity result = mapper.toEntity(dto);
+        ActualRegistrationEntity result = mapper.toEntity(dto);
 
         assertAll(
                 () -> assertNotNull(result),
@@ -97,7 +97,7 @@ class RegistrationMapperTest {
     @Test
     @DisplayName("Слияние в энтити")
     void mergeToEntityTest() {
-        RegistrationEntity result = mapper.mergeToEntity(dto, entity);
+        ActualRegistrationEntity result = mapper.mergeToEntity(dto, entity);
 
         assertAll(
                 () -> assertNotNull(result),
@@ -126,7 +126,7 @@ class RegistrationMapperTest {
     @Test
     @DisplayName("Маппинг в лист дто")
     void toDtoListTest() {
-        List<RegistrationDto> result = mapper.toDtoList(new ArrayList<>(List.of(entity, entity, entity)));
+        List<ActualRegistrationDto> result = mapper.toDtoList(new ArrayList<>(List.of(entity, entity, entity)));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -142,6 +142,5 @@ class RegistrationMapperTest {
     void toDtoListEmptyListTest() {
         assertEquals(new ArrayList<>(), mapper.toDtoList(Collections.emptyList()));
     }
-
 
 }

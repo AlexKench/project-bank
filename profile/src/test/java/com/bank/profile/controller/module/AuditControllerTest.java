@@ -1,5 +1,6 @@
-package com.bank.profile.controller;
+package com.bank.profile.controller.module;
 
+import com.bank.profile.controller.AuditController;
 import com.bank.profile.dto.AuditDto;
 import com.bank.profile.service.AuditService;
 import lombok.SneakyThrows;

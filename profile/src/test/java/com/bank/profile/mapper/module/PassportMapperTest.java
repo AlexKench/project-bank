@@ -1,9 +1,11 @@
-package com.bank.profile.mapper;
+package com.bank.profile.mapper.module;
 
 import com.bank.profile.dto.PassportDto;
 import com.bank.profile.dto.RegistrationDto;
 import com.bank.profile.entity.PassportEntity;
 import com.bank.profile.entity.RegistrationEntity;
+import com.bank.profile.mapper.PassportMapper;
+import com.bank.profile.mapper.PassportMapperImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

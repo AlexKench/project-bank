@@ -1,9 +1,13 @@
-package com.bank.profile.mapper;
+package com.bank.profile.mapper.module;
 
-import com.bank.profile.dto.AccountDetailsIdDto;
+import com.bank.profile.dto.ActualRegistrationDto;
+import com.bank.profile.dto.PassportDto;
 import com.bank.profile.dto.ProfileDto;
-import com.bank.profile.entity.AccountDetailsIdEntity;
+import com.bank.profile.entity.ActualRegistrationEntity;
+import com.bank.profile.entity.PassportEntity;
 import com.bank.profile.entity.ProfileEntity;
+import com.bank.profile.mapper.ProfileMapper;
+import com.bank.profile.mapper.ProfileMapperImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,32 +22,40 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Тесты для {@link AccountDetailsIdMapper}
+ * Тесты для {@link ProfileMapper}
  */
-@DisplayName("Тесты для AccountDetailsIdMapper")
-class AccountDetailsIdMapperTest {
+@DisplayName("Тесты для ProfileMapper")
+class ProfileMapperTest {
 
-    private AccountDetailsIdDto dto;
-    private AccountDetailsIdEntity entity;
+    private ProfileDto dto;
+    private ProfileEntity entity;
 
-    private final AccountDetailsIdMapper mapper = new AccountDetailsIdMapperImpl();
+    private final ProfileMapper mapper = new ProfileMapperImpl();
+
 
     @BeforeEach
     void createEntityAndDto() {
-        dto = new AccountDetailsIdDto(1L, 1L, new ProfileDto());
-        entity = new AccountDetailsIdEntity(2L, 1L, new ProfileEntity());
+        dto = new ProfileDto(1L, 1L, "hello", "hello",
+                777L, 777L, new PassportDto(), new ActualRegistrationDto());
+
+        entity = new ProfileEntity(1L, 1L, "hello", "hello",
+                777L, 777L, new PassportEntity(), new ActualRegistrationEntity());
     }
 
 
     @Test
     @DisplayName("Маппинг в дто")
     void toDtoTest() {
-        AccountDetailsIdDto result = mapper.toDto(entity);
+        ProfileDto result = mapper.toDto(entity);
 
         assertAll(
                 () -> assertNotNull(result),
                 () -> assertEquals(entity.getId(), result.getId()),
-                () -> assertEquals(entity.getAccountId(), result.getAccountId())
+                () -> assertEquals(entity.getPhoneNumber(), result.getPhoneNumber()),
+                () -> assertEquals(entity.getEmail(), result.getEmail()),
+                () -> assertEquals(entity.getNameOnCard(), result.getNameOnCard()),
+                () -> assertEquals(entity.getInn(), result.getInn()),
+                () -> assertEquals(entity.getSnils(), result.getSnils())
         );
     }
 
@@ -58,11 +70,15 @@ class AccountDetailsIdMapperTest {
     @Test
     @DisplayName("Маппинг в энтити")
     void toEntityTest() {
-        AccountDetailsIdEntity result = mapper.toEntity(dto);
+        ProfileEntity result = mapper.toEntity(dto);
 
         assertAll(
                 () -> assertNotNull(result),
-                () -> assertEquals(dto.getAccountId(), result.getAccountId())
+                () -> assertEquals(dto.getPhoneNumber(), result.getPhoneNumber()),
+                () -> assertEquals(dto.getEmail(), result.getEmail()),
+                () -> assertEquals(dto.getNameOnCard(), result.getNameOnCard()),
+                () -> assertEquals(dto.getInn(), result.getInn()),
+                () -> assertEquals(dto.getSnils(), result.getSnils())
         );
     }
 
@@ -77,12 +93,16 @@ class AccountDetailsIdMapperTest {
     @Test
     @DisplayName("Слияние в энтити")
     void mergeToEntityTest() {
-        AccountDetailsIdEntity result = mapper.mergeToEntity(dto, entity);
+        ProfileEntity result = mapper.mergeToEntity(dto, entity);
 
         assertAll(
                 () -> assertNotNull(result),
                 () -> assertEquals(entity.getId(), result.getId()),
-                () -> assertEquals(entity.getAccountId(), result.getAccountId())
+                () -> assertEquals(entity.getPhoneNumber(), result.getPhoneNumber()),
+                () -> assertEquals(entity.getEmail(), result.getEmail()),
+                () -> assertEquals(entity.getNameOnCard(), result.getNameOnCard()),
+                () -> assertEquals(entity.getInn(), result.getInn()),
+                () -> assertEquals(entity.getSnils(), result.getSnils())
         );
     }
 
@@ -97,7 +117,7 @@ class AccountDetailsIdMapperTest {
     @Test
     @DisplayName("Маппинг в лист дто")
     void toDtoListTest() {
-        List<AccountDetailsIdDto> result = mapper.toDtoList(new ArrayList<>(List.of(entity, entity, entity)));
+        List<ProfileDto> result = mapper.toDtoList(new ArrayList<>(List.of(entity, entity, entity)));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -113,4 +133,6 @@ class AccountDetailsIdMapperTest {
     void toDtoListEmptyListTest() {
         assertEquals(new ArrayList<>(), mapper.toDtoList(Collections.emptyList()));
     }
+
+
 }

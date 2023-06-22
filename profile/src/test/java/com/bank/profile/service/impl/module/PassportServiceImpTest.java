@@ -1,4 +1,4 @@
-package com.bank.profile.service.impl;
+package com.bank.profile.service.impl.module;
 
 
 import com.bank.profile.dto.PassportDto;
@@ -7,6 +7,7 @@ import com.bank.profile.entity.PassportEntity;
 import com.bank.profile.entity.RegistrationEntity;
 import com.bank.profile.mapper.PassportMapper;
 import com.bank.profile.repository.PassportRepository;
+import com.bank.profile.service.impl.PassportServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

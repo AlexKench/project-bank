@@ -1,5 +1,6 @@
-package com.bank.profile.controller;
+package com.bank.profile.controller.module;
 
+import com.bank.profile.controller.ProfileController;
 import com.bank.profile.dto.ProfileDto;
 import com.bank.profile.service.impl.ProfileServiceImp;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,8 +1,8 @@
-package com.bank.profile.controller;
+package com.bank.profile.controller.module;
 
-
-import com.bank.profile.dto.ActualRegistrationDto;
-import com.bank.profile.service.impl.ActualRegistrationServiceImp;
+import com.bank.profile.controller.PassportController;
+import com.bank.profile.dto.PassportDto;
+import com.bank.profile.service.impl.PassportServiceImp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
@@ -28,15 +28,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Тесты для {@link ActualRegistrationController}
+ * Тесты для {@link PassportController}
  */
-@WebMvcTest(ActualRegistrationController.class)
-@DisplayName("Тесты для ActualRegistrationController")
-class ActualRegistrationControllerTest {
+@WebMvcTest(PassportController.class)
+@DisplayName("Тесты для PassportController")
+class PassportControllerTest {
 
     private final long testId = 1L;
 
-    private ActualRegistrationDto actualRegistrationDto;
+    private PassportDto passportDto;
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,14 +45,14 @@ class ActualRegistrationControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private ActualRegistrationServiceImp service;
+    private PassportServiceImp service;
 
     @BeforeEach
     void createDto() {
-        actualRegistrationDto = new ActualRegistrationDto();
-        actualRegistrationDto.setId(testId);
-        actualRegistrationDto.setCity("Moskva");
-        actualRegistrationDto.setHouseBlock("33");
+        passportDto = new PassportDto();
+        passportDto.setId(testId);
+        passportDto.setGender("man");
+        passportDto.setFirstName("Aleksandr");
 
     }
 
@@ -60,14 +60,14 @@ class ActualRegistrationControllerTest {
     @SneakyThrows
     @DisplayName("Чтение по id, позитивный сценарий")
     void readByIdPositiveTest() {
-        when(service.findById(testId)).thenReturn(actualRegistrationDto);
+        when(service.findById(testId)).thenReturn(passportDto);
 
-        mockMvc.perform(get("/actual/registration/read/{id}", testId)
+        mockMvc.perform(get("/passport/read/{id}", testId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(actualRegistrationDto.getId()))
-                .andExpect(jsonPath("$.city").value(actualRegistrationDto.getCity()))
-                .andExpect(jsonPath("$.houseBlock").value(actualRegistrationDto.getHouseBlock()));
+                .andExpect(jsonPath("$.id").value(passportDto.getId()))
+                .andExpect(jsonPath("$.gender").value(passportDto.getGender()))
+                .andExpect(jsonPath("$.firstName").value(passportDto.getFirstName()));
     }
 
 
@@ -78,7 +78,7 @@ class ActualRegistrationControllerTest {
         when(service.findById(testId))
                 .thenThrow(new EntityNotFoundException("accountDetailsId с данным id не найден!"));
 
-        mockMvc.perform(get("/actual/registration/read/{id}", testId))
+        mockMvc.perform(get("/passport/read/{id}", testId))
                 .andExpect(status().isNotFound());
     }
 
@@ -87,15 +87,15 @@ class ActualRegistrationControllerTest {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        when(service.save(actualRegistrationDto)).thenReturn(actualRegistrationDto);
+        when(service.save(passportDto)).thenReturn(passportDto);
 
-        mockMvc.perform(post("/actual/registration/create")
+        mockMvc.perform(post("/passport/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(actualRegistrationDto)))
+                        .content(objectMapper.writeValueAsString(passportDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(actualRegistrationDto.getId()))
-                .andExpect(jsonPath("$.city").value(actualRegistrationDto.getCity()))
-                .andExpect(jsonPath("$.houseBlock").value(actualRegistrationDto.getHouseBlock()));
+                .andExpect(jsonPath("$.id").value(passportDto.getId()))
+                .andExpect(jsonPath("$.gender").value(passportDto.getGender()))
+                .andExpect(jsonPath("$.firstName").value(passportDto.getFirstName()));
     }
 
 
@@ -105,7 +105,7 @@ class ActualRegistrationControllerTest {
     void createNullNegativeTest() {
         when(service.save(null)).thenReturn(null);
 
-        mockMvc.perform(post("/actual/registration/create")
+        mockMvc.perform(post("/passport/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(null)))
                 .andExpect(status().is4xxClientError());
@@ -116,20 +116,20 @@ class ActualRegistrationControllerTest {
     @SneakyThrows
     @DisplayName("Обновление по id, позитивный сценарий")
     void updateByIdPositiveTest() {
-        ActualRegistrationDto result = new ActualRegistrationDto();
+        PassportDto result = new PassportDto();
         result.setId(testId);
-        result.setCity("Piter");
-        result.setHouseBlock("78");
+        result.setGender("Woman");
+        result.setFirstName("Nastya");
 
-        when(service.update(testId, actualRegistrationDto)).thenReturn(result);
+        when(service.update(testId, passportDto)).thenReturn(result);
 
-        mockMvc.perform(put("/actual/registration/update/{id}", testId)
+        mockMvc.perform(put("/passport/update/{id}", testId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(actualRegistrationDto)))
+                        .content(objectMapper.writeValueAsString(passportDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(result.getId()))
-                .andExpect(jsonPath("$.city").value(result.getCity()))
-                .andExpect(jsonPath("$.houseBlock").value(result.getHouseBlock()));
+                .andExpect(jsonPath("$.gender").value(result.getGender()))
+                .andExpect(jsonPath("$.firstName").value(result.getFirstName()));
     }
 
 
@@ -137,30 +137,29 @@ class ActualRegistrationControllerTest {
     @SneakyThrows
     @DisplayName("Обновление по несуществующему id, негативный сценарий")
     void updateByNonExistIdNegativeTest() {
-        when(service.update(testId, actualRegistrationDto))
+        when(service.update(testId, passportDto))
                 .thenThrow(new EntityNotFoundException("Обновление невозможно, accountDetailsId не найден!"));
 
-        mockMvc.perform(put("/actual/registration/update/{id}", testId)
+        mockMvc.perform(put("/passport/update/{id}", testId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(actualRegistrationDto)))
+                        .content(objectMapper.writeValueAsString(passportDto)))
                 .andExpect(status().isNotFound());
     }
+
 
     @Test
     @SneakyThrows
     @DisplayName("Чтение по нескольким id, позитивный сценарий")
     void readAllByIdPositiveTestTest() {
         List<Long> longList = new ArrayList<>(List.of(testId, testId, testId));
-        List<ActualRegistrationDto> result = new ArrayList<>(List.of(
-                actualRegistrationDto, actualRegistrationDto, actualRegistrationDto)
-        );
+        List<PassportDto> result = new ArrayList<>(List.of(passportDto, passportDto, passportDto));
 
         when(service.findAllById(longList)).thenReturn(result);
 
-        mockMvc.perform(get("/actual/registration/read/all")
+        mockMvc.perform(get("/passport/read/all")
                         .param("ids", "" + testId, "" + testId, "" + testId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(actualRegistrationDto)))
+                        .content(objectMapper.writeValueAsString(passportDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.hasSize(longList.size())));
     }
@@ -170,13 +169,13 @@ class ActualRegistrationControllerTest {
     @SneakyThrows
     @DisplayName("Чтение по нескольким несуществующим id, негативный сценарий")
     void readAllByNonExistIdNegativeTest() {
-        when(service.findAllById(new ArrayList<>(List.of(testId, testId, testId)))).thenReturn(Collections.emptyList());
+        when(service.findAllById(new ArrayList<>(List.of(testId, testId, testId))))
+                .thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/actual/registration/read/all")
+        mockMvc.perform(get("/passport/read/all")
                         .param("ids", "" + testId, "" + testId, "" + testId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
-
 
 }
