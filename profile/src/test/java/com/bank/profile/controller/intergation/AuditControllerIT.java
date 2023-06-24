@@ -1,5 +1,6 @@
 package com.bank.profile.controller.intergation;
 
+import com.bank.profile.controller.AuditController;
 import com.bank.profile.entity.AuditEntity;
 import com.bank.profile.repository.AuditRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,11 +16,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.sql.Timestamp;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
+
+/**
+ * Интеграционные тесты для {@link AuditController}
+ */
 @SpringBootTest
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
+@DisplayName("Интеграционные тесты для AuditController")
 class AuditControllerIT {
 
     private static final long id = 1L;
@@ -43,7 +50,7 @@ class AuditControllerIT {
         auditRepository.save(testEntity1);
     }
 
-    @BeforeEach
+    @BeforeAll
     void createJson() {
         json1 = objectMapper.createObjectNode();
         json1.put("id", id);
