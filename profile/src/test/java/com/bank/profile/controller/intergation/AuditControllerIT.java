@@ -15,9 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Timestamp;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 /**
@@ -29,10 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Интеграционные тесты для AuditController")
 class AuditControllerIT {
 
-    private static final long id = 1L;
-
-    private ObjectNode json1;
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -42,9 +38,11 @@ class AuditControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private ObjectNode nodes;
+
     @BeforeAll
     void createEntityForDB() {
-        AuditEntity testEntity1 = new AuditEntity(id, "one", "one", "one",
+        AuditEntity testEntity1 = new AuditEntity(anyLong(), "one", "one", "one",
                 "one", new Timestamp(1L), new Timestamp(1L), "one", "one");
 
         auditRepository.save(testEntity1);
@@ -52,27 +50,27 @@ class AuditControllerIT {
 
     @BeforeAll
     void createJson() {
-        json1 = objectMapper.createObjectNode();
-        json1.put("id", id);
-        json1.put("entityType", "one");
-        json1.put("operationType", "one");
-        json1.put("createdBy", "one");
-        json1.put("modifiedBy", "one");
-        json1.put("createdAt", "1970-01-01T00:00:00.001+00:00");
-        json1.put("modifiedAt", "1970-01-01T00:00:00.001+00:00");
-        json1.put("newEntityJson", "one");
-        json1.put("entityJson", "one");
+        nodes = objectMapper.createObjectNode();
+        nodes.put("entityType", "one");
+        nodes.put("operationType", "one");
+        nodes.put("createdBy", "one");
+        nodes.put("modifiedBy", "one");
+        nodes.put("createdAt", "1970-01-01T00:00:00.001+00:00");
+        nodes.put("modifiedAt", "1970-01-01T00:00:00.001+00:00");
+        nodes.put("newEntityJson", "one");
+        nodes.put("entityJson", "one");
     }
 
     @Test
     @SneakyThrows
     @DisplayName("Чтение по id из БД, позитивный сценарий")
     void readByIdReturnJsonPositiveTest() {
-        mockMvc.perform(get("/audit/{id}", id))
+        mockMvc.perform(get("/audit/{id}", 1L))
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
-                        content().json(json1.toString())
+                        content().json(nodes.toString()),
+                        jsonPath("$.id").exists()
                 );
     }
 
