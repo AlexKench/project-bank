@@ -1,4 +1,4 @@
-package com.bank.profile.mapper.module;
+package com.bank.profile.module.mapper;
 
 import com.bank.profile.dto.RegistrationDto;
 import com.bank.profile.entity.RegistrationEntity;

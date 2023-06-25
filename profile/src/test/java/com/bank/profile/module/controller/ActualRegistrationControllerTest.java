@@ -1,9 +1,9 @@
-package com.bank.profile.controller.module;
+package com.bank.profile.module.controller;
 
-import com.bank.profile.controller.AccountDetailsIdController;
-import com.bank.profile.dto.AccountDetailsIdDto;
-import com.bank.profile.dto.ProfileDto;
-import com.bank.profile.service.impl.AccountDetailsIdServiceImp;
+
+import com.bank.profile.controller.ActualRegistrationController;
+import com.bank.profile.dto.ActualRegistrationDto;
+import com.bank.profile.service.impl.ActualRegistrationServiceImp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -30,15 +29,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Тесты для {@link AccountDetailsIdController}
+ * Тесты для {@link ActualRegistrationController}
  */
-@WebMvcTest(AccountDetailsIdController.class)
-@DisplayName("Тесты для AccountDetailsIdController")
-class AccountDetailsIdControllerTest {
+@WebMvcTest(ActualRegistrationController.class)
+@DisplayName("Тесты для ActualRegistrationController")
+class ActualRegistrationControllerTest {
 
     private final long testId = 1L;
 
-    private AccountDetailsIdDto detailsIdDto;
+    private ActualRegistrationDto actualRegistrationDto;
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,28 +46,29 @@ class AccountDetailsIdControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private AccountDetailsIdServiceImp service;
+    private ActualRegistrationServiceImp service;
 
     @BeforeEach
     void createDto() {
-        detailsIdDto = new AccountDetailsIdDto();
-        detailsIdDto.setId(testId);
-        detailsIdDto.setAccountId(testId);
-        detailsIdDto.setProfile(new ProfileDto());
+        actualRegistrationDto = new ActualRegistrationDto();
+        actualRegistrationDto.setId(testId);
+        actualRegistrationDto.setCity("Moskva");
+        actualRegistrationDto.setHouseBlock("33");
+
     }
 
     @Test
     @SneakyThrows
     @DisplayName("Чтение по id, позитивный сценарий")
     void readByIdPositiveTest() {
-        when(service.findById(testId)).thenReturn(detailsIdDto);
+        when(service.findById(testId)).thenReturn(actualRegistrationDto);
 
-        mockMvc.perform(get("/account/details/read/{id}", testId)
+        mockMvc.perform(get("/actual/registration/read/{id}", testId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(detailsIdDto.getId()))
-                .andExpect(jsonPath("$.accountId").value(detailsIdDto.getAccountId()))
-                .andExpect(jsonPath("$.profile").value(detailsIdDto.getProfile()));
+                .andExpect(jsonPath("$.id").value(actualRegistrationDto.getId()))
+                .andExpect(jsonPath("$.city").value(actualRegistrationDto.getCity()))
+                .andExpect(jsonPath("$.houseBlock").value(actualRegistrationDto.getHouseBlock()));
     }
 
 
@@ -76,11 +76,10 @@ class AccountDetailsIdControllerTest {
     @SneakyThrows
     @DisplayName("Чтение по несуществующему id, негативный сценарий")
     void readByNonExistIdNegativeTest() {
-        when(service.findById(testId)).thenThrow(
-                new EntityNotFoundException("accountDetailsId с данным id не найден!")
-        );
+        when(service.findById(testId))
+                .thenThrow(new EntityNotFoundException("accountDetailsId с данным id не найден!"));
 
-        mockMvc.perform(get("/account/details/read/{id}", testId))
+        mockMvc.perform(get("/actual/registration/read/{id}", testId))
                 .andExpect(status().isNotFound());
     }
 
@@ -89,15 +88,15 @@ class AccountDetailsIdControllerTest {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        when(service.save(detailsIdDto)).thenReturn(detailsIdDto);
+        when(service.save(actualRegistrationDto)).thenReturn(actualRegistrationDto);
 
-        mockMvc.perform(post("/account/details/create")
+        mockMvc.perform(post("/actual/registration/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(detailsIdDto)))
+                        .content(objectMapper.writeValueAsString(actualRegistrationDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(detailsIdDto.getId()))
-                .andExpect(jsonPath("$.accountId").value(detailsIdDto.getAccountId()))
-                .andExpect(jsonPath("$.profile").value(detailsIdDto.getProfile()));
+                .andExpect(jsonPath("$.id").value(actualRegistrationDto.getId()))
+                .andExpect(jsonPath("$.city").value(actualRegistrationDto.getCity()))
+                .andExpect(jsonPath("$.houseBlock").value(actualRegistrationDto.getHouseBlock()));
     }
 
 
@@ -107,7 +106,7 @@ class AccountDetailsIdControllerTest {
     void createNullNegativeTest() {
         when(service.save(null)).thenReturn(null);
 
-        mockMvc.perform(post("/account/details/create")
+        mockMvc.perform(post("/actual/registration/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(null)))
                 .andExpect(status().is4xxClientError());
@@ -118,20 +117,20 @@ class AccountDetailsIdControllerTest {
     @SneakyThrows
     @DisplayName("Обновление по id, позитивный сценарий")
     void updateByIdPositiveTest() {
-        AccountDetailsIdDto result = new AccountDetailsIdDto();
+        ActualRegistrationDto result = new ActualRegistrationDto();
         result.setId(testId);
-        result.setAccountId(testId + 1);
-        result.setProfile(new ProfileDto());
+        result.setCity("Piter");
+        result.setHouseBlock("78");
 
-        when(service.update(testId, detailsIdDto)).thenReturn(result);
+        when(service.update(testId, actualRegistrationDto)).thenReturn(result);
 
-        mockMvc.perform(put("/account/details/update/{id}", testId)
+        mockMvc.perform(put("/actual/registration/update/{id}", testId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(detailsIdDto)))
+                        .content(objectMapper.writeValueAsString(actualRegistrationDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(result.getId()))
-                .andExpect(jsonPath("$.accountId").value(result.getAccountId()))
-                .andExpect(jsonPath("$.profile").value(result.getProfile()));
+                .andExpect(jsonPath("$.city").value(result.getCity()))
+                .andExpect(jsonPath("$.houseBlock").value(result.getHouseBlock()));
     }
 
 
@@ -139,28 +138,30 @@ class AccountDetailsIdControllerTest {
     @SneakyThrows
     @DisplayName("Обновление по несуществующему id, негативный сценарий")
     void updateByNonExistIdNegativeTest() {
-        when(service.update(testId, detailsIdDto))
+        when(service.update(testId, actualRegistrationDto))
                 .thenThrow(new EntityNotFoundException("Обновление невозможно, accountDetailsId не найден!"));
 
-        mockMvc.perform(put("/account/details/update/{id}", testId)
+        mockMvc.perform(put("/actual/registration/update/{id}", testId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(detailsIdDto)))
+                        .content(objectMapper.writeValueAsString(actualRegistrationDto)))
                 .andExpect(status().isNotFound());
     }
-
 
     @Test
     @SneakyThrows
     @DisplayName("Чтение по нескольким id, позитивный сценарий")
     void readAllByIdPositiveTestTest() {
         List<Long> longList = new ArrayList<>(List.of(testId, testId, testId));
-        List<AccountDetailsIdDto> result = new ArrayList<>(List.of(detailsIdDto, detailsIdDto, detailsIdDto));
+        List<ActualRegistrationDto> result = new ArrayList<>(List.of(
+                actualRegistrationDto, actualRegistrationDto, actualRegistrationDto)
+        );
 
         when(service.findAllById(longList)).thenReturn(result);
 
-        mockMvc.perform(get("/account/details/read/all")
+        mockMvc.perform(get("/actual/registration/read/all")
                         .param("ids", "" + testId, "" + testId, "" + testId)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(actualRegistrationDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.hasSize(longList.size())));
     }
@@ -170,13 +171,13 @@ class AccountDetailsIdControllerTest {
     @SneakyThrows
     @DisplayName("Чтение по нескольким несуществующим id, негативный сценарий")
     void readAllByNonExistIdNegativeTest() {
-        when(service.findAllById(new ArrayList<>(List.of(testId, testId, testId))))
-                .thenReturn(Collections.emptyList());
+        when(service.findAllById(new ArrayList<>(List.of(testId, testId, testId)))).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/account/details/read/all")
+        mockMvc.perform(get("/actual/registration/read/all")
                         .param("ids", "" + testId, "" + testId, "" + testId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
 
 }

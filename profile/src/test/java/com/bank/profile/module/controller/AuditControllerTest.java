@@ -1,4 +1,4 @@
-package com.bank.profile.controller.module;
+package com.bank.profile.module.controller;
 
 import com.bank.profile.controller.AuditController;
 import com.bank.profile.dto.AuditDto;

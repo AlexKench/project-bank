@@ -1,4 +1,4 @@
-package com.bank.profile.service.impl.module;
+package com.bank.profile.module.service.impl;
 
 import com.bank.profile.dto.ActualRegistrationDto;
 import com.bank.profile.dto.PassportDto;
