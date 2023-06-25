@@ -30,6 +30,11 @@
             <artifactId>common</artifactId>
             <version>${common.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.lbruun.springboot</groupId>
+            <artifactId>preliquibase-spring-boot-starter</artifactId>
+            <version>${preliquibase.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
