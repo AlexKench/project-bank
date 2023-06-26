@@ -4,9 +4,11 @@ import com.bank.profile.controller.AuditController;
 import com.bank.profile.entity.AuditEntity;
 import com.bank.profile.repository.AuditRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,9 +17,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Timestamp;
 
-import static org.mockito.ArgumentMatchers.anyLong;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
 /**
@@ -38,28 +42,17 @@ class AuditControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private ObjectNode nodes;
+    private AuditEntity entity;
 
-    @BeforeAll
+
+    @BeforeEach
     void createEntityForDB() {
-        AuditEntity testEntity1 = new AuditEntity(anyLong(), "one", "one", "one",
+        entity = new AuditEntity(1L, "one", "one", "one",
                 "one", new Timestamp(1L), new Timestamp(1L), "one", "one");
 
-        auditRepository.save(testEntity1);
+        auditRepository.save(entity);
     }
 
-    @BeforeAll
-    void createJson() {
-        nodes = objectMapper.createObjectNode();
-        nodes.put("entityType", "one");
-        nodes.put("operationType", "one");
-        nodes.put("createdBy", "one");
-        nodes.put("modifiedBy", "one");
-        nodes.put("createdAt", "1970-01-01T00:00:00.001+00:00");
-        nodes.put("modifiedAt", "1970-01-01T00:00:00.001+00:00");
-        nodes.put("newEntityJson", "one");
-        nodes.put("entityJson", "one");
-    }
 
     @Test
     @SneakyThrows
@@ -69,7 +62,7 @@ class AuditControllerIT {
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
-                        content().json(nodes.toString()),
+                        content().json(objectMapper.writeValueAsString(entity)),
                         jsonPath("$.id").exists()
                 );
     }

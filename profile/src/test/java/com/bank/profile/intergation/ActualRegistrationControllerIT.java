@@ -1,11 +1,11 @@
 package com.bank.profile.intergation;
 
 import com.bank.profile.controller.ActualRegistrationController;
-import com.bank.profile.entity.*;
+import com.bank.profile.entity.ActualRegistrationEntity;
 import com.bank.profile.repository.ActualRegistrationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -39,27 +39,21 @@ public class ActualRegistrationControllerIT {
     @Autowired
     private ActualRegistrationRepository repository;
 
-
     @Autowired
     private ObjectMapper objectMapper;
 
 
-    private static long id = 1L;
-
     private ActualRegistrationEntity entity;
 
 
-    @BeforeAll
+    @BeforeEach
     void createEntityForDB() {
         entity = new ActualRegistrationEntity(
-                id, "hello", "hello", "hello", "hello",
+                1L, "hello", "hello", "hello", "hello",
                 "hello", "hello", "hello", "hello", "hello", 1L);
 
         repository.save(entity);
-        repository.save(new ActualRegistrationEntity(++id, "bye", "bye", "bye", "bye",
-                "bye", "bye", "bye", "bye", "bye", 2L));
-        repository.save(new ActualRegistrationEntity(++id, "hi", "hi", "hi", "hi",
-                "hi", "hi", "hi", "hi", "hi", 3L));
+
     }
 
 
@@ -92,8 +86,8 @@ public class ActualRegistrationControllerIT {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        ActualRegistrationEntity saveEntity = new ActualRegistrationEntity(++id, "privet", "privet", "privet", "privet",
-                "privet", "privet", "privet", "privet", "privet", 4L);
+        ActualRegistrationEntity saveEntity = new ActualRegistrationEntity(2L, "privet", "privet", "privet", "privet",
+                "privet", "privet", "privet", "privet", "privet", 2L);
 
         mockMvc.perform(post("/actual/registration/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,16 +117,16 @@ public class ActualRegistrationControllerIT {
     @DisplayName("Обновление по id, позитивный сценарий")
     void updateByIdPositiveTest() {
         repository.save(new ActualRegistrationEntity(
-                ++id, "poka", "poka", "poka", "poka",
+                2L, "poka", "poka", "poka", "poka",
                 "poka", "poka", "poka", "poka",
-                "poka", 5L));
+                "poka", 2L));
 
         ActualRegistrationEntity updateEntity = new ActualRegistrationEntity(
-                5L, "thanks", "thanks", "thanks", "thanks",
+                2L, "thanks", "thanks", "thanks", "thanks",
                 "thanks", "thanks", "thanks", "thanks",
                 "thanks", 77L);
 
-        mockMvc.perform(put("/actual/registration/update/{id}", id)
+        mockMvc.perform(put("/actual/registration/update/{id}", 2L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateEntity)))
                 .andExpectAll(
@@ -165,6 +159,14 @@ public class ActualRegistrationControllerIT {
     @SneakyThrows
     @DisplayName("Чтение по нескольким id, позитивный сценарий")
     void readAllByIdPositiveTestTest() {
+        repository.save(new ActualRegistrationEntity(
+                2L, "hello", "hello", "hello", "hello",
+                "hello", "hello", "hello", "hello", "hello", 2L));
+
+        repository.save(new ActualRegistrationEntity(
+                3L, "hello", "hello", "hello", "hello",
+                "hello", "hello", "hello", "hello", "hello", 3L));
+
         mockMvc.perform(get("/actual/registration/read/all")
                         .param("ids", "" + 1L, "" + 2L, "" + 3L)
                         .contentType(MediaType.APPLICATION_JSON))

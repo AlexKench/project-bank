@@ -1,15 +1,20 @@
 package com.bank.profile.intergation;
 
 import com.bank.profile.controller.AccountDetailsIdController;
-import com.bank.profile.entity.*;
+import com.bank.profile.entity.RegistrationEntity;
+import com.bank.profile.entity.ActualRegistrationEntity;
+import com.bank.profile.entity.AccountDetailsIdEntity;
+import com.bank.profile.entity.PassportEntity;
+import com.bank.profile.entity.ProfileEntity;
 import com.bank.profile.repository.AccountDetailsIdRepository;
 import com.bank.profile.repository.ProfileRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestInstance;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,8 +53,6 @@ class AccountDetailsIdControllerIT {
     private ObjectMapper objectMapper;
 
 
-    private static long id = 1L;
-
     private AccountDetailsIdEntity entity;
 
 
@@ -71,14 +74,11 @@ class AccountDetailsIdControllerIT {
             777L, 777L, passport, actualRegistration);
 
 
-    @BeforeAll
+    @BeforeEach
     void createEntityForDB() {
-        entity = new AccountDetailsIdEntity(id, 1L, profile);
+        entity = new AccountDetailsIdEntity(1L, 1L, profile);
         profileRepository.save(profile);
         repository.save(entity);
-        repository.save(new AccountDetailsIdEntity(++id, 2L, profile));
-        repository.save(new AccountDetailsIdEntity(++id, 3L, profile));
-
     }
 
 
@@ -111,7 +111,7 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        AccountDetailsIdEntity saveEntity = new AccountDetailsIdEntity(++id, 111L, profile);
+        AccountDetailsIdEntity saveEntity = new AccountDetailsIdEntity(2L, 222L, profile);
         mockMvc.perform(post("/account/details/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(saveEntity)))
@@ -145,9 +145,9 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Обновление по id, позитивный сценарий")
     void updateByIdPositiveTest() {
-        repository.save(new AccountDetailsIdEntity(++id, 55L, profile));
-        AccountDetailsIdEntity updateEntity = new AccountDetailsIdEntity(id, 78L, profile);
-        mockMvc.perform(put("/account/details/update/{id}", id)
+        repository.save(new AccountDetailsIdEntity(2L, 555L, profile));
+        AccountDetailsIdEntity updateEntity = new AccountDetailsIdEntity(2L, 78L, profile);
+        mockMvc.perform(put("/account/details/update/{id}", 2L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateEntity)))
                 .andExpectAll(
@@ -162,7 +162,7 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Обновление по несуществующему id, негативный сценарий")
     void updateByNonExistIdNegativeTest() {
-        AccountDetailsIdEntity updateEntity = new AccountDetailsIdEntity(0L, id + 25, profile);
+        AccountDetailsIdEntity updateEntity = new AccountDetailsIdEntity(0L, 258L, profile);
         mockMvc.perform(put("/account/details/update/{id}", 0L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateEntity)))
@@ -177,6 +177,8 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Чтение по нескольким id, позитивный сценарий")
     void readAllByIdPositiveTestTest() {
+        repository.save(new AccountDetailsIdEntity(2L, 782L, profile));
+        repository.save(new AccountDetailsIdEntity(3L, 953L, profile));
         mockMvc.perform(get("/account/details/read/all")
                         .param("ids", "" + 1L, "" + 2L, "" + 3L)
                         .contentType(MediaType.APPLICATION_JSON))
