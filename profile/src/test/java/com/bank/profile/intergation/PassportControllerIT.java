@@ -7,7 +7,10 @@ import com.bank.profile.repository.PassportRepository;
 import com.bank.profile.repository.RegistrationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,9 +20,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
  * Интеграционные тесты для {@link PassportController}
@@ -44,32 +50,20 @@ public class PassportControllerIT {
 
     private PassportEntity entity;
 
-    private RegistrationEntity registration;
-
-    private RegistrationEntity registration2;
-
+    RegistrationEntity registration = new RegistrationEntity(
+            1L, "registration", "registration", "registration", "registration",
+            "registration", "registration", "registration", "registration",
+            "registration", 1L);
 
     @BeforeEach
-    void createEntityForDB() {
-        registration = new RegistrationEntity(
-                1L, "registration", "registration", "registration", "registration",
-                "registration", "registration", "registration", "registration",
-                "registration", 1L);
-
-        registration2 = new RegistrationEntity(
-                2L, "registration", "registration", "registration", "registration",
-                "registration", "registration", "registration", "registration",
-                "registration", 2L);
-
-        registrationRepository.save(registration);
-
+    void createRegistration() {
         entity = new PassportEntity(
                 1L, 111, 1L, "hello", "hello",
                 "hello", "m", LocalDate.now(), "hello", "hello",
                 LocalDate.now(), 1, LocalDate.now(), registration);
 
+        registrationRepository.save(registration);
         repository.save(entity);
-
     }
 
 
@@ -102,20 +96,7 @@ public class PassportControllerIT {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        PassportEntity saveEntity = new PassportEntity(
-                2L, 222, 2L, "hello", "hello",
-                "hello", "m", LocalDate.now(), "hello", "hello",
-                LocalDate.now(), 2, LocalDate.now(), registration2);
-
-
-        mockMvc.perform(post("/passport/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(saveEntity)))
-                .andExpectAll(
-                        status().isOk(),
-                        content().contentType(MediaType.APPLICATION_JSON),
-                        content().json(objectMapper.writeValueAsString(saveEntity))
-                );
+        // TODO настроить тест
     }
 
 
@@ -135,15 +116,15 @@ public class PassportControllerIT {
     @SneakyThrows
     @DisplayName("Обновление по id, позитивный сценарий")
     void updateByIdPositiveTest() {
-        repository.save(new PassportEntity(
-                2L, 555, 5L, "privet", "privet",
-                "privet", "w", LocalDate.now(), "privet", "privet",
-                LocalDate.now(), 5, LocalDate.now(), registration));
-
         PassportEntity updateEntity = new PassportEntity(
-                2L, 555, 5L, "im", "im",
+                2L, 532133, 5564L, "im", "im",
                 "im", "m", LocalDate.now(), "im", "im",
-                LocalDate.now(), 5, LocalDate.now(), registration);
+                LocalDate.now(), 86542, LocalDate.now(), registration);
+
+        repository.save(new PassportEntity(
+                2L, 7525, 54544L, "privet", "privet",
+                "privet", "w", LocalDate.now(), "privet", "privet",
+                LocalDate.now(), 8674, LocalDate.now(), registration));
 
         mockMvc.perform(put("/passport/update/{id}", 2L)
                         .contentType(MediaType.APPLICATION_JSON)

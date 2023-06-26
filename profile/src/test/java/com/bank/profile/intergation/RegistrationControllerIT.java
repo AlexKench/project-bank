@@ -6,7 +6,10 @@ import com.bank.profile.entity.RegistrationEntity;
 import com.bank.profile.repository.RegistrationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,9 +17,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
  * Интеграционные тесты для {@link RegistrationController}
@@ -36,7 +42,6 @@ public class RegistrationControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-
     private RegistrationEntity entity;
 
 
@@ -46,7 +51,6 @@ public class RegistrationControllerIT {
                 "hello", "reg", "hello", "hello", "reg", 1L);
 
         repository.save(entity);
-
     }
 
 
@@ -78,7 +82,8 @@ public class RegistrationControllerIT {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        RegistrationEntity saveEntity = new RegistrationEntity(2L, "hel", "ooo", "ooo", "reg",
+        RegistrationEntity saveEntity = new RegistrationEntity(
+                2L, "hel", "ooo", "ooo", "reg",
                 "hello", "reg", "hello", "hello", "reg", 2L);
 
         mockMvc.perform(post("/registration/create")
@@ -108,11 +113,13 @@ public class RegistrationControllerIT {
     @SneakyThrows
     @DisplayName("Обновление по id, позитивный сценарий")
     void updateByIdPositiveTest() {
-        repository.save(new RegistrationEntity(2L, "hel", "ooo", "ooo", "reg",
-                "hello", "reg", "hello", "hello", "reg", 2L));
-
-        RegistrationEntity updateEntity = new RegistrationEntity(2L, "new reg", "new reg", "new reg", "reg",
+        RegistrationEntity updateEntity = new RegistrationEntity(
+                2L, "new reg", "new reg", "new reg", "reg",
                 "new reg", "reg", "new reg", "new reg", "reg", 2L);
+
+        repository.save(new RegistrationEntity(
+                2L, "hel", "ooo", "ooo", "reg",
+                "hello", "reg", "hello", "hello", "reg", 2L));
 
         mockMvc.perform(put("/registration/update/{id}", 2L)
                         .contentType(MediaType.APPLICATION_JSON)
