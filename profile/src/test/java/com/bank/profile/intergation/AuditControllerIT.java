@@ -42,6 +42,7 @@ class AuditControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+
     private AuditEntity entity;
 
 
@@ -66,6 +67,7 @@ class AuditControllerIT {
                         jsonPath("$.id").exists()
                 );
     }
+
 
     @Test
     @SneakyThrows

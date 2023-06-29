@@ -56,20 +56,20 @@ class AccountDetailsIdControllerIT {
     private AccountDetailsIdEntity entity;
 
 
-    RegistrationEntity registration = new RegistrationEntity(
+    private static final RegistrationEntity registration = new RegistrationEntity(
             1L, "hello", "hello", "hello", "hello",
             "hello", "hello", "hello", "hello", "hello", 1L);
 
-    ActualRegistrationEntity actualRegistration = new ActualRegistrationEntity(
+    public static final ActualRegistrationEntity actualRegistration = new ActualRegistrationEntity(
             1L, "hello", "hello", "hello", "hello",
             "hello", "hello", "hello", "hello", "hello", 1L);
 
-    PassportEntity passport = new PassportEntity(
+    public static final PassportEntity passport = new PassportEntity(
             1L, 777, 7L, "hello", "hello",
             "hello", "m", LocalDate.now(), "hello", "hello",
             LocalDate.now(), 777, LocalDate.now(), registration);
 
-    ProfileEntity profile = new ProfileEntity(
+    public static final ProfileEntity profile = new ProfileEntity(
             1L, 1L, "hello", "hello",
             777L, 777L, passport, actualRegistration);
 

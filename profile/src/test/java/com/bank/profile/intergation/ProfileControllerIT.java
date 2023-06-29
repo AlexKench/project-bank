@@ -51,21 +51,21 @@ public class ProfileControllerIT {
     @Autowired
     private ActualRegistrationRepository actualRegistrationRepository;
 
-
     @Autowired
     private ObjectMapper objectMapper;
 
+
     private ProfileEntity entity;
 
-    RegistrationEntity registration = new RegistrationEntity(
+    private final static RegistrationEntity registration = new RegistrationEntity(
             1L, "hello", "hello", "hello", "hello",
             "hello", "hello", "hello", "hello", "hello", 1L);
 
-    ActualRegistrationEntity actualRegistration = new ActualRegistrationEntity(
+    private final static ActualRegistrationEntity actualRegistration = new ActualRegistrationEntity(
             1L, "hello", "hello", "hello", "hello",
             "hello", "hello", "hello", "hello", "hello", 1L);
 
-    PassportEntity passport = new PassportEntity(
+    private final static PassportEntity passport = new PassportEntity(
             1L, 777, 7L, "hello", "hello",
             "hello", "m", LocalDate.now(), "hello", "hello",
             LocalDate.now(), 777, LocalDate.now(), registration);
@@ -111,7 +111,59 @@ public class ProfileControllerIT {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        // TODO настроить тест
+        String saveNode = """
+                {
+                  "id": 2,
+                  "phoneNumber": 3464,
+                  "email": "string",
+                  "nameOnCard": "string",
+                  "inn": 763543,
+                  "snils": 234546,
+                  
+                      "passport": {
+                        "series": 346446,
+                        "number": 2354675,
+                        "lastName": "string",
+                        "firstName": "string",
+                        "middleName": "string",
+                        "gender": "m",
+                        "birthDate": "2023-06-29",
+                        "birthPlace": "string",
+                        "issuedBy": "string",
+                        "dateOfIssue": "2023-06-29",
+                        "divisionCode": 77325,
+                        "expirationDate": "2023-06-29",
+                        
+                        "registration": {
+                          "country": "warning",
+                          "region": "warning",
+                          "city": "warning",
+                          "district": "warning",
+                          "locality": "warning",
+                          "street": "warning",
+                          "houseNumber": "warning",
+                          "houseBlock": "warning",
+                          "flatNumber": "warning",
+                          "index": 2
+                        }
+                  },
+                  
+                  "actualRegistration": {
+                    "country": "Moscow",
+                    "index": 5555
+                  }
+                }
+                """;
+
+
+        mockMvc.perform(post("/profile/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(saveNode))
+                .andExpectAll(
+                        status().isOk(),
+                        content().contentType((MediaType.APPLICATION_JSON)),
+                        content().json(saveNode)
+                );
     }
 
 
@@ -137,6 +189,7 @@ public class ProfileControllerIT {
         repository.save(new ProfileEntity(2L, 2L, "lo", "lo",
                 95252L, 102654L, passport, actualRegistration));
 
+
         mockMvc.perform(put("/profile/update/{id}", 2L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateEntity)))
@@ -157,6 +210,7 @@ public class ProfileControllerIT {
                 "0", "m", LocalDate.now(), "0", "0",
                 LocalDate.now(), 0, LocalDate.now(), registration);
 
+
         mockMvc.perform(put("/profile/update/{id}", 0L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateEntity)))
@@ -175,6 +229,7 @@ public class ProfileControllerIT {
 
         repository.save(new ProfileEntity(3L, 3L, "hello", "hello",
                 888888L, 88888888L, passport, actualRegistration));
+
 
         mockMvc.perform(get("/profile/read/all")
                         .param("ids", "" + 1L, "" + 2L, "" + 3L)

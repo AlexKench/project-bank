@@ -86,8 +86,10 @@ public class ActualRegistrationControllerIT {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        ActualRegistrationEntity saveEntity = new ActualRegistrationEntity(2L, "privet", "privet", "privet", "privet",
+        ActualRegistrationEntity saveEntity = new ActualRegistrationEntity(
+                repository.findAll().size() + 1L, "privet", "privet", "privet", "privet",
                 "privet", "privet", "privet", "privet", "privet", 2L);
+
 
         mockMvc.perform(post("/actual/registration/create")
                         .contentType(MediaType.APPLICATION_JSON)

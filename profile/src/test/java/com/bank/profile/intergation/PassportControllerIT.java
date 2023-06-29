@@ -6,6 +6,7 @@ import com.bank.profile.entity.RegistrationEntity;
 import com.bank.profile.repository.PassportRepository;
 import com.bank.profile.repository.RegistrationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,12 +49,14 @@ public class PassportControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+
     private PassportEntity entity;
 
-    RegistrationEntity registration = new RegistrationEntity(
+    private final static RegistrationEntity registration = new RegistrationEntity(
             1L, "registration", "registration", "registration", "registration",
             "registration", "registration", "registration", "registration",
             "registration", 1L);
+
 
     @BeforeEach
     void createRegistration() {
@@ -96,7 +99,45 @@ public class PassportControllerIT {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        // TODO настроить тест
+        ObjectNode saveNode = objectMapper.createObjectNode();
+
+        RegistrationEntity saveRegistration = new RegistrationEntity();
+
+        PassportEntity saveEntity = new PassportEntity(
+                repository.findAll().size() + 1L, 111, 2L, "gg", "gg",
+                "gg", "m", LocalDate.now(), "gg", "gg",
+                LocalDate.now(), 1, LocalDate.now(), saveRegistration);
+
+
+        saveRegistration.setIndex(5555L);
+        saveRegistration.setCountry("Moscow");
+
+
+        saveNode.put("id", saveEntity.getId());
+        saveNode.put("series", saveEntity.getSeries());
+        saveNode.put("number", saveEntity.getNumber());
+        saveNode.put("lastName", saveEntity.getLastName());
+        saveNode.put("firstName", saveEntity.getFirstName());
+        saveNode.put("middleName", saveEntity.getMiddleName());
+        saveNode.put("gender", saveEntity.getGender());
+        saveNode.put("divisionCode", saveEntity.getDivisionCode());
+        saveNode.put("birthPlace", saveEntity.getBirthPlace());
+        saveNode.put("issuedBy", saveEntity.getIssuedBy());
+        saveNode
+                .put("registration", objectMapper.createObjectNode()
+                        .put("id", registrationRepository.findAll().size() + 1)
+                        .put("index", saveRegistration.getIndex())
+                        .put("country", saveRegistration.getCountry()));
+
+
+        mockMvc.perform(post("/passport/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(saveEntity)))
+                .andExpectAll(
+                        status().isOk(),
+                        content().contentType((MediaType.APPLICATION_JSON)),
+                        content().json(String.valueOf(saveNode))
+                );
     }
 
 
@@ -126,6 +167,7 @@ public class PassportControllerIT {
                 "privet", "w", LocalDate.now(), "privet", "privet",
                 LocalDate.now(), 8674, LocalDate.now(), registration));
 
+
         mockMvc.perform(put("/passport/update/{id}", 2L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateEntity)))
@@ -145,6 +187,7 @@ public class PassportControllerIT {
                 0L, 0, 0L, "0", "0",
                 "0", "m", LocalDate.now(), "0", "0",
                 LocalDate.now(), 0, LocalDate.now(), registration);
+
 
         mockMvc.perform(put("/passport/update/{id}", 0L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -168,6 +211,7 @@ public class PassportControllerIT {
                 3L, 333, 3L, "hi", "hi",
                 "hi", "m", LocalDate.now(), "hi", "hi",
                 LocalDate.now(), 3, LocalDate.now(), registration));
+
 
         mockMvc.perform(get("/passport/read/all")
                         .param("ids", "" + 1L, "" + 2L, "" + 3L)

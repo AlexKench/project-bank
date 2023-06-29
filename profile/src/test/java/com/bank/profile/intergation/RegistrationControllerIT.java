@@ -83,8 +83,9 @@ public class RegistrationControllerIT {
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
         RegistrationEntity saveEntity = new RegistrationEntity(
-                2L, "hel", "ooo", "ooo", "reg",
+                repository.findAll().size() + 1L, "hel", "ooo", "ooo", "reg",
                 "hello", "reg", "hello", "hello", "reg", 2L);
+
 
         mockMvc.perform(post("/registration/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,6 +122,7 @@ public class RegistrationControllerIT {
                 2L, "hel", "ooo", "ooo", "reg",
                 "hello", "reg", "hello", "hello", "reg", 2L));
 
+
         mockMvc.perform(put("/registration/update/{id}", 2L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateEntity)))
@@ -141,6 +143,7 @@ public class RegistrationControllerIT {
                 "0", "0", "0", "0",
                 "0", 0L);
 
+
         mockMvc.perform(put("/registrations/update/{id}", 0L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateEntity)))
@@ -159,6 +162,7 @@ public class RegistrationControllerIT {
 
         repository.save(new RegistrationEntity(3L, "hel", "ooo", "ooo", "reg",
                 "hello", "reg", "hello", "hello", "reg", 3L));
+
 
         mockMvc.perform(get("/registration/read/all")
                         .param("ids", "" + 1L, "" + 2L, "" + 3L)
