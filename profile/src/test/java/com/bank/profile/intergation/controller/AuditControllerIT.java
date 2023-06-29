@@ -1,4 +1,4 @@
-package com.bank.profile.intergation;
+package com.bank.profile.intergation.controller;
 
 import com.bank.profile.controller.AuditController;
 import com.bank.profile.entity.AuditEntity;

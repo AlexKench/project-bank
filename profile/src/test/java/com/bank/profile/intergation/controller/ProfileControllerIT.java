@@ -1,20 +1,19 @@
-package com.bank.profile.intergation;
+package com.bank.profile.intergation.controller;
 
-import com.bank.profile.controller.AccountDetailsIdController;
-import com.bank.profile.entity.RegistrationEntity;
+import com.bank.profile.controller.ProfileController;
 import com.bank.profile.entity.ActualRegistrationEntity;
-import com.bank.profile.entity.AccountDetailsIdEntity;
 import com.bank.profile.entity.PassportEntity;
 import com.bank.profile.entity.ProfileEntity;
-import com.bank.profile.repository.AccountDetailsIdRepository;
+import com.bank.profile.entity.RegistrationEntity;
+import com.bank.profile.repository.ActualRegistrationRepository;
+import com.bank.profile.repository.PassportRepository;
 import com.bank.profile.repository.ProfileRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,52 +31,53 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
- * Интеграционные тесты для {@link AccountDetailsIdController}
+ * Интеграционные тесты для {@link ProfileController}
  */
 @SpringBootTest
 @AutoConfigureMockMvc(printOnlyOnFailure = false)
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
-@DisplayName("Интеграционные тесты для AccountDetailsIdController")
-class AccountDetailsIdControllerIT {
+@DisplayName("Интеграционные тесты для ProfileController")
+public class ProfileControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private AccountDetailsIdRepository repository;
+    private ProfileRepository repository;
 
     @Autowired
-    private ProfileRepository profileRepository;
+    private PassportRepository passportRepository;
+
+    @Autowired
+    private ActualRegistrationRepository actualRegistrationRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
 
 
-    private AccountDetailsIdEntity entity;
+    private ProfileEntity entity;
 
-
-    private static final RegistrationEntity registration = new RegistrationEntity(
+    private final static RegistrationEntity registration = new RegistrationEntity(
             1L, "hello", "hello", "hello", "hello",
             "hello", "hello", "hello", "hello", "hello", 1L);
 
-    public static final ActualRegistrationEntity actualRegistration = new ActualRegistrationEntity(
+    private final static ActualRegistrationEntity actualRegistration = new ActualRegistrationEntity(
             1L, "hello", "hello", "hello", "hello",
             "hello", "hello", "hello", "hello", "hello", 1L);
 
-    public static final PassportEntity passport = new PassportEntity(
+    private final static PassportEntity passport = new PassportEntity(
             1L, 777, 7L, "hello", "hello",
             "hello", "m", LocalDate.now(), "hello", "hello",
             LocalDate.now(), 777, LocalDate.now(), registration);
 
-    public static final ProfileEntity profile = new ProfileEntity(
-            1L, 1L, "hello", "hello",
-            777L, 777L, passport, actualRegistration);
-
 
     @BeforeEach
     void createEntityForDB() {
-        entity = new AccountDetailsIdEntity(1L, 1L, profile);
-        profileRepository.save(profile);
+        entity = new ProfileEntity(1L, 1L, "hello", "hello",
+                777L, 777L, passport, actualRegistration);
+
+        passportRepository.save(passport);
+        actualRegistrationRepository.save(actualRegistration);
         repository.save(entity);
     }
 
@@ -86,7 +86,7 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Чтение по id из БД, позитивный сценарий")
     void readByIdReturnJsonPositiveTest() {
-        mockMvc.perform(get("/account/details/read/{id}", 1))
+        mockMvc.perform(get("/profile/read/{id}", 1))
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
@@ -99,10 +99,10 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Чтение из БД по несуществующему id, негативный сценарий")
     void readByNonExistIdNegativeTest() {
-        mockMvc.perform(get("/account/details/read/{id}", 0L))
+        mockMvc.perform(get("/profile/read/{id}", 0L))
                 .andExpectAll(
                         status().isNotFound(),
-                        content().string("accountDetailsId с данным id не найден!")
+                        content().string("profile с данным id не найден!")
                 );
     }
 
@@ -111,14 +111,58 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        AccountDetailsIdEntity saveEntity = new AccountDetailsIdEntity(2L, 222L, profile);
-        mockMvc.perform(post("/account/details/create")
+        String saveNode = """
+                {
+                  "id": 2,
+                  "phoneNumber": 3464,
+                  "email": "string",
+                  "nameOnCard": "string",
+                  "inn": 763543,
+                  "snils": 234546,
+                  
+                      "passport": {
+                        "series": 346446,
+                        "number": 2354675,
+                        "lastName": "string",
+                        "firstName": "string",
+                        "middleName": "string",
+                        "gender": "m",
+                        "birthDate": "2023-06-29",
+                        "birthPlace": "string",
+                        "issuedBy": "string",
+                        "dateOfIssue": "2023-06-29",
+                        "divisionCode": 77325,
+                        "expirationDate": "2023-06-29",
+                        
+                        "registration": {
+                          "country": "warning",
+                          "region": "warning",
+                          "city": "warning",
+                          "district": "warning",
+                          "locality": "warning",
+                          "street": "warning",
+                          "houseNumber": "warning",
+                          "houseBlock": "warning",
+                          "flatNumber": "warning",
+                          "index": 2
+                        }
+                  },
+                  
+                  "actualRegistration": {
+                    "country": "Moscow",
+                    "index": 5555
+                  }
+                }
+                """;
+
+
+        mockMvc.perform(post("/profile/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(saveEntity)))
+                        .content(saveNode))
                 .andExpectAll(
                         status().isOk(),
-                        content().contentType(MediaType.APPLICATION_JSON),
-                        content().json(objectMapper.writeValueAsString(saveEntity))
+                        content().contentType((MediaType.APPLICATION_JSON)),
+                        content().json(saveNode)
                 );
     }
 
@@ -127,17 +171,11 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Создание, передан null, негативный сценарий")
     void createNullNegativeTest() {
-        mockMvc.perform(post("/account/details/create")
+        mockMvc.perform(post("/profile/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(null)))
                 .andExpectAll(
-                        status().is4xxClientError(),
-                        content().string("Required request body is missing: " +
-                                "public org.springframework.http.ResponseEntity" +
-                                "<com.bank.profile.dto.AccountDetailsIdDto>" +
-                                " com.bank.profile.controller.AccountDetailsIdController.create" +
-                                "(com.bank.profile.dto.AccountDetailsIdDto)")
-                );
+                        status().is4xxClientError());
     }
 
 
@@ -145,9 +183,14 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Обновление по id, позитивный сценарий")
     void updateByIdPositiveTest() {
-        repository.save(new AccountDetailsIdEntity(2L, 555L, profile));
-        AccountDetailsIdEntity updateEntity = new AccountDetailsIdEntity(2L, 78L, profile);
-        mockMvc.perform(put("/account/details/update/{id}", 2L)
+        ProfileEntity updateEntity = new ProfileEntity(2L, 2L, "hello_g", "hello_g",
+                8887415L, 774528887L, passport, actualRegistration);
+
+        repository.save(new ProfileEntity(2L, 2L, "lo", "lo",
+                95252L, 102654L, passport, actualRegistration));
+
+
+        mockMvc.perform(put("/profile/update/{id}", 2L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateEntity)))
                 .andExpectAll(
@@ -162,13 +205,17 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Обновление по несуществующему id, негативный сценарий")
     void updateByNonExistIdNegativeTest() {
-        AccountDetailsIdEntity updateEntity = new AccountDetailsIdEntity(0L, 258L, profile);
-        mockMvc.perform(put("/account/details/update/{id}", 0L)
+        PassportEntity updateEntity = new PassportEntity(
+                0L, 0, 0L, "0", "0",
+                "0", "m", LocalDate.now(), "0", "0",
+                LocalDate.now(), 0, LocalDate.now(), registration);
+
+
+        mockMvc.perform(put("/profile/update/{id}", 0L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateEntity)))
                 .andExpectAll(
-                        status().isNotFound(),
-                        content().string("Обновление невозможно, accountDetailsId не найден!")
+                        status().isNotFound()
                 );
     }
 
@@ -177,9 +224,14 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Чтение по нескольким id, позитивный сценарий")
     void readAllByIdPositiveTestTest() {
-        repository.save(new AccountDetailsIdEntity(2L, 782L, profile));
-        repository.save(new AccountDetailsIdEntity(3L, 953L, profile));
-        mockMvc.perform(get("/account/details/read/all")
+        repository.save(new ProfileEntity(2L, 2L, "hello", "hello",
+                888L, 8888L, passport, actualRegistration));
+
+        repository.save(new ProfileEntity(3L, 3L, "hello", "hello",
+                888888L, 88888888L, passport, actualRegistration));
+
+
+        mockMvc.perform(get("/profile/read/all")
                         .param("ids", "" + 1L, "" + 2L, "" + 3L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -191,7 +243,7 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Чтение по нескольким несуществующим id, негативный сценарий")
     void readAllByNonExistIdNegativeTest() {
-        mockMvc.perform(get("/account/details/read/all")
+        mockMvc.perform(get("/profile/read/all")
                         .param("ids", "" + 0, "" + 154, "" + 99)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(
