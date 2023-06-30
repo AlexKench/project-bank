@@ -1,4 +1,4 @@
-package com.bank.profile.intergation.controller.service.impl;
+package com.bank.profile.integration.service.impl;
 
 import com.bank.profile.dto.ActualRegistrationDto;
 import com.bank.profile.entity.ActualRegistrationEntity;
