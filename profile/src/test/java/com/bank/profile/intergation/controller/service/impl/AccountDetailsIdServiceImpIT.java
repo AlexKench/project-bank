@@ -52,21 +52,21 @@ class AccountDetailsIdServiceImpIT {
 
 
     private static final RegistrationEntity registration = new RegistrationEntity(
-            1L, "hello", "hello", "hello", "hello",
-            "hello", "hello", "hello", "hello", "hello", 1L);
+            1L, "one", "one", "one", "one",
+            "one", "one", "one", "one", "one", 1L);
 
     public static final ActualRegistrationEntity actualRegistration = new ActualRegistrationEntity(
-            1L, "hello", "hello", "hello", "hello",
-            "hello", "hello", "hello", "hello", "hello", 1L);
+            1L, "one", "one", "one", "one",
+            "one", "one", "one", "one", "one", 1L);
 
     public static final PassportEntity passport = new PassportEntity(
-            1L, 777, 7L, "hello", "hello",
-            "hello", "m", LocalDate.now(), "hello", "hello",
-            LocalDate.now(), 777, LocalDate.now(), registration);
+            1L, 1, 1L, "one", "one",
+            "one", "m", LocalDate.now(), "one", "one",
+            LocalDate.now(), 1, LocalDate.now(), registration);
 
     public static final ProfileEntity profile = new ProfileEntity(
-            1L, 1L, "hello", "hello",
-            777L, 777L, passport, actualRegistration);
+            1L, 1L, "one", "one",
+            1L, 1L, passport, actualRegistration);
 
 
     @BeforeEach
