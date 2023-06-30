@@ -1,15 +1,17 @@
-package com.bank.profile.integration.service.impl;
+package com.bank.profile.intergation.service.impl;
 
 import com.bank.profile.dto.AuditDto;
 import com.bank.profile.entity.AuditEntity;
 import com.bank.profile.repository.AuditRepository;
 import com.bank.profile.service.AuditService;
+import com.bank.profile.service.impl.AuditServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.EntityNotFoundException;
 import java.sql.Timestamp;
@@ -19,10 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
+/**
+ * Интеграционные тесты для {@link AuditServiceImpl}
+ */
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
-@DisplayName("Интеграционные тесты для ActualRegistrationServiceImp")
+@DisplayName("Интеграционные тесты для AuditServiceImpl")
 class AuditServiceImplIT {
 
     @Autowired
@@ -30,6 +35,7 @@ class AuditServiceImplIT {
 
     @Autowired
     private AuditRepository repository;
+
 
     private AuditEntity entity;
 

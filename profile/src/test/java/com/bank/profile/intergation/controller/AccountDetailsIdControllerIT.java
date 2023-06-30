@@ -113,7 +113,7 @@ class AccountDetailsIdControllerIT {
     @SneakyThrows
     @DisplayName("Создание, позитивный сценарий")
     void createPositiveTest() {
-        AccountDetailsIdEntity saveEntity = new AccountDetailsIdEntity(2L, 222L, profile);
+        AccountDetailsIdEntity saveEntity = new AccountDetailsIdEntity(repository.findAll().size() + 1L, 222L, profile);
         mockMvc.perform(post("/account/details/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(saveEntity)))

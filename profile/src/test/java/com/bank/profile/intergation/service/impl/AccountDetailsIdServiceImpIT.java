@@ -1,4 +1,4 @@
-package com.bank.profile.integration.service.impl;
+package com.bank.profile.intergation.service.impl;
 
 import com.bank.profile.dto.AccountDetailsIdDto;
 import com.bank.profile.entity.ActualRegistrationEntity;
@@ -17,6 +17,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Интеграционные тесты для {@link AccountDetailsIdServiceImp}
  */
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("Интеграционные тесты для AccountDetailsIdServiceImp")
 class AccountDetailsIdServiceImpIT {
