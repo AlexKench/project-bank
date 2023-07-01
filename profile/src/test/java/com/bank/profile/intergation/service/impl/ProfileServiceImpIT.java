@@ -202,10 +202,6 @@ class ProfileServiceImpIT {
         assertEquals(3, result.size());
 
 
-
-
-
-
     }
 
 
