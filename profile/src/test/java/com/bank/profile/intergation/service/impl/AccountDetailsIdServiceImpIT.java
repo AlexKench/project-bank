@@ -22,6 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -50,6 +51,7 @@ class AccountDetailsIdServiceImpIT {
     @Autowired
     private ProfileMapper mapper;
 
+
     private AccountDetailsIdEntity entity;
 
 
@@ -73,7 +75,7 @@ class AccountDetailsIdServiceImpIT {
 
     @BeforeEach
     void createEntityForDB() {
-        entity = new AccountDetailsIdEntity(1L, 1L, profile);
+        entity = new AccountDetailsIdEntity(repository.findAll().size() + 1L, 1L, profile);
         profileRepository.save(profile);
         repository.save(entity);
     }
@@ -106,7 +108,7 @@ class AccountDetailsIdServiceImpIT {
     @DisplayName("Сохранение по id, позитивный сценарий")
     void saveByIdPositiveTest() {
         AccountDetailsIdDto saveDto = new AccountDetailsIdDto(
-                repository.findAll().size() + 1L, 2L, mapper.toDto(profile));
+                repository.findAll().size() + 1L, 1L, mapper.toDto(profile));
 
         AccountDetailsIdDto result = service.save(saveDto);
 
@@ -161,7 +163,7 @@ class AccountDetailsIdServiceImpIT {
         repository.save(new AccountDetailsIdEntity(
                 repository.findAll().size() + 1L, 3L, profile));
 
-        List<AccountDetailsIdEntity> listEntity = repository.findAll();
+        List<AccountDetailsIdDto> listEntity = service.findAllById(Arrays.asList(1L, 2L, 3L));
 
         assertNotNull(listEntity);
         assertEquals(3, listEntity.size());

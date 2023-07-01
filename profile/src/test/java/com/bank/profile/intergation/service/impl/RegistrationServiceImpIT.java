@@ -16,9 +16,13 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Интеграционные тесты для {@link ActualRegistrationServiceImp}
@@ -35,13 +39,14 @@ class RegistrationServiceImpIT {
     @Autowired
     private RegistrationRepository repository;
 
+
     private RegistrationEntity entity;
 
 
     @BeforeEach
     void createEntityForDB() {
-        entity = new RegistrationEntity(1L, "one", "one", "one", "one",
-                "one", "one", "one", "one", "one", 1L);
+        entity = new RegistrationEntity(repository.findAll().size() + 1L, "one", "one", "one", "one",
+                "one", "one", "one", "one", "one", 156442L);
         repository.save(entity);
     }
 
@@ -157,10 +162,10 @@ class RegistrationServiceImpIT {
                 repository.findAll().size() + 1L, "three", "three", "three", "three",
                 "three", "three", "three", "three", "three", 3L));
 
-        List<RegistrationEntity> listEntity = repository.findAll();
+        List<RegistrationDto> listDto = service.findAllById(Arrays.asList(1L, 2L, 3L));
 
-        assertNotNull(listEntity);
-        assertEquals(3, listEntity.size());
+        assertNotNull(listDto);
+        assertEquals(3, listDto.size());
     }
 
 

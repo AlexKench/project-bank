@@ -6,6 +6,8 @@ import com.bank.profile.entity.ProfileEntity;
 import com.bank.profile.entity.RegistrationEntity;
 import com.bank.profile.entity.PassportEntity;
 import com.bank.profile.mapper.ProfileMapper;
+import com.bank.profile.repository.ActualRegistrationRepository;
+import com.bank.profile.repository.PassportRepository;
 import com.bank.profile.repository.ProfileRepository;
 import com.bank.profile.service.impl.ProfileServiceImp;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,6 +49,11 @@ class ProfileServiceImpIT {
     @Autowired
     private ProfileMapper profileMapper;
 
+    @Autowired
+    private PassportRepository passportRepository;
+
+    @Autowired
+    private ActualRegistrationRepository actualRegistrationRepository;
 
     private RegistrationEntity registrationEntity;
 
@@ -90,6 +97,9 @@ class ProfileServiceImpIT {
 
         repository.save(entity);
 
+        entity.getPassport().setId((long) passportRepository.findAll().size());
+        entity.getActualRegistration().setId((long) actualRegistrationRepository.findAll().size());
+
         ProfileDto result = service.findById(entity.getId());
 
         assertAll(
@@ -99,7 +109,9 @@ class ProfileServiceImpIT {
                 () -> assertEquals(entity.getEmail(), result.getEmail()),
                 () -> assertEquals(entity.getNameOnCard(), result.getNameOnCard()),
                 () -> assertEquals(entity.getInn(), result.getInn()),
-                () -> assertEquals(entity.getSnils(), result.getSnils())
+                () -> assertEquals(entity.getSnils(), result.getSnils()),
+                () -> assertEquals(entity.getPassport().getId(), result.getPassport().getId()),
+                () -> assertEquals(entity.getActualRegistration().getId(), result.getActualRegistration().getId())
         );
     }
 
@@ -167,7 +179,9 @@ class ProfileServiceImpIT {
                 () -> assertEquals(profileEntity.getEmail(), result.getEmail()),
                 () -> assertEquals(profileEntity.getNameOnCard(), result.getNameOnCard()),
                 () -> assertEquals(profileEntity.getInn(), result.getInn()),
-                () -> assertEquals(profileEntity.getSnils(), result.getSnils())
+                () -> assertEquals(profileEntity.getSnils(), result.getSnils()),
+                () -> assertEquals(entity.getPassport().getId(), result.getPassport().getId()),
+                () -> assertEquals(entity.getActualRegistration().getId(), result.getActualRegistration().getId())
         );
     }
 
@@ -185,17 +199,17 @@ class ProfileServiceImpIT {
     @DisplayName("Поиск по нескольким id, позитивный сценарий")
     void findAllByIdPositiveTest() {
         ProfileEntity entity = new ProfileEntity(repository.findAll().size() + 1L, 14621L, "gggg", "gggg",
-                451245L, 412581L, passportEntity, actualRegistrationEntity);
+                5421L, 41258211L, passportEntity, actualRegistrationEntity);
 
         ProfileEntity entity1 = new ProfileEntity(repository.findAll().size() + 1L, 24321L, "hhh", "hhh",
-                45256351L, 542114495L, passportEntity, actualRegistrationEntity);
+                45256351L, 542114323495L, passportEntity, actualRegistrationEntity);
 
         ProfileEntity entity2 = new ProfileEntity(repository.findAll().size() + 1L, 1462177L, "cccc", "cccc",
-                451277745L, 41258177L, passportEntity, actualRegistrationEntity);
+                45127777745L, 4125228177L, passportEntity, actualRegistrationEntity);
 
-        repository.save(entity);
-        repository.save(entity1);
-        repository.save(entity2);
+        service.save(profileMapper.toDto(entity));
+        service.save(profileMapper.toDto(entity1));
+        service.save(profileMapper.toDto(entity2));
 
         List<ProfileDto> result = service.findAllById(Arrays.asList(1L, 2L, 3L));
 

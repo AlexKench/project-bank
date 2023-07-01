@@ -19,6 +19,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -50,7 +51,6 @@ class PassportServiceImpIT {
 
     private PassportEntity entity;
 
-
     private RegistrationEntity registration;
 
 
@@ -58,10 +58,10 @@ class PassportServiceImpIT {
     void createEntityForDB() {
         registration = new RegistrationEntity();
         registration.setCountry("one");
-        registration.setIndex(1L);
+        registration.setIndex(18654L);
 
         entity = new PassportEntity(
-                1L, 1, 1L, "one", "one",
+                repository.findAll().size() + 1L, 1754, 154L, "one", "one",
                 "one", "m", LocalDate.now(), "one", "one",
                 LocalDate.now(), 1, LocalDate.now(), registration);
 
@@ -73,7 +73,7 @@ class PassportServiceImpIT {
     @Test
     @DisplayName("Поиск по id, позитивный сценарий")
     void findByIdPositiveTest() {
-        PassportDto result = service.findById(1L);
+        PassportDto result = service.findById(entity.getId());
 
         assertAll(
                 () -> assertNotNull(result),
@@ -107,12 +107,12 @@ class PassportServiceImpIT {
     void saveByIdPositiveTest() {
         RegistrationEntity saveRegistration = new RegistrationEntity();
         saveRegistration.setCountry("two");
-        saveRegistration.setIndex(1L);
+        saveRegistration.setIndex(2L);
 
         PassportDto saveDto = new PassportDto(
-                repository.findAll().size() + 1L, 2, 2L, "two", "two",
+                repository.findAll().size() + 1L, 2852, 4442L, "two", "two",
                 "two", "m", LocalDate.now(), "two", "two",
-                LocalDate.now(), 2, LocalDate.now(), mapper.toDto(saveRegistration));
+                LocalDate.now(), 255, LocalDate.now(), mapper.toDto(saveRegistration));
 
         PassportDto result = service.save(saveDto);
 
@@ -145,12 +145,17 @@ class PassportServiceImpIT {
     @Test
     @DisplayName("Обновление по id, позитивный сценарий")
     void updateByIdPositiveTest() {
-        PassportDto saveDto = new PassportDto(
-                1L, 1, 1L, "update", "update",
-                "update", "m", LocalDate.now(), "update", "update",
-                LocalDate.now(), 1, LocalDate.now(), mapper.toDto(registration));
+        RegistrationEntity registration = new RegistrationEntity();
+        registration.setId(1L);
+        registration.setCountry("one");
+        registration.setIndex(18654L);
 
-        PassportDto result = service.update(1L, saveDto);
+        PassportDto saveDto = new PassportDto(
+                1L, 146243, 1777755L, "update", "update",
+                "update", "m", LocalDate.now(), "update", "update",
+                LocalDate.now(), 6542323, LocalDate.now(), mapper.toDto(registration));
+
+        PassportDto result = service.update(saveDto.getId(), saveDto);
 
         assertAll(
                 () -> assertNotNull(result),
@@ -182,20 +187,31 @@ class PassportServiceImpIT {
     @Test
     @DisplayName("Поиск по нескольким id, позитивный сценарий")
     void findAllByIdPositiveTest() {
-        repository.save(new PassportEntity(
-                repository.findAll().size() + 1L, 2, 2L, "two", "two",
-                "two", "m", LocalDate.now(), "two", "two",
-                LocalDate.now(), 2, LocalDate.now(), registration));
+        PassportEntity entity = new PassportEntity(
+                repository.findAll().size() + 1L, 1754, 154L, "one", "one",
+                "one", "m", LocalDate.now(), "one", "one",
+                LocalDate.now(), 1, LocalDate.now(), registration);
 
-        repository.save(new PassportEntity(
-                repository.findAll().size() + 1L, 3, 3L, "three", "three",
-                "three", "m", LocalDate.now(), "three", "three",
-                LocalDate.now(), 3, LocalDate.now(), registration));
+        PassportEntity entity1 = new PassportEntity(
+                repository.findAll().size() + 1L, 1754, 154L, "one", "one",
+                "one", "m", LocalDate.now(), "one", "one",
+                LocalDate.now(), 1, LocalDate.now(), registration);
 
-        List<PassportEntity> listEntity = repository.findAll();
+        PassportEntity entity2 = new PassportEntity(
+                repository.findAll().size() + 1L, 5565456, 154L, "one", "one",
+                "one", "m", LocalDate.now(), "one", "one",
+                LocalDate.now(), 1, LocalDate.now(), registration);
 
-        assertNotNull(listEntity);
-        assertEquals(3, listEntity.size());
+        registrationRepository.save(registration);
+        repository.save(entity);
+        repository.save(entity1);
+        repository.save(entity2);
+
+        List<PassportDto> listDto = service.findAllById(Arrays.asList(1L, 2L, 3L));
+
+
+        assertNotNull(listDto);
+        assertEquals(3, listDto.size());
     }
 
 
