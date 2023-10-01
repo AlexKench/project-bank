@@ -1,5 +1,5 @@
 server:
-  port: 8088
+  port: 0
   servlet:
     context-path: /api/history
 management:
@@ -22,3 +22,5 @@ spring:
     change-log: db/changelog/db.changelog-master.yaml
     enabled: true
     drop-first: false
+  kafka:
+    bootstrap-servers: localhost:9092
